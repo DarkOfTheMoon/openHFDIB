@@ -1,12 +1,12 @@
 /*---------------------------------------------------------------------------*\
-                        _   _ ____________ ___________ 
+                        _   _ ____________ ___________
                        | | | ||  ___|  _  \_   _| ___ \     H ybrid
   ___  _ __   ___ _ __ | |_| || |_  | | | | | | | |_/ /     F ictitious
  / _ \| '_ \ / _ \ '_ \|  _  ||  _| | | | | | | | ___ \     D omain
 | (_) | |_) |  __/ | | | | | || |   | |/ / _| |_| |_/ /     I mmersed
  \___/| .__/ \___|_| |_\_| |_/\_|   |___/  \___/\____/      B oundary
-      | |                                              
-      |_|                                              
+      | |
+      |_|
 -------------------------------------------------------------------------------
 License
 
@@ -32,7 +32,7 @@ SourceFiles
     immersedBodies.C
 
 Contributors
-    Federico Municchi (2016)
+    Federico Municchi 
 \*---------------------------------------------------------------------------*/
 
 #ifndef immersedBody_H
@@ -55,78 +55,78 @@ Contributors
 namespace Foam
 {
  enum {STATICBODY , ROTATINGBODY};
- 
+
  class immersedBody
  {
-  
+
   private:
 
    //first time update?
-   bool                                       isFirstUpdate_; 
-   
+   bool                                       isFirstUpdate_;
+
    //Dictionary
    dictionary                                  immersedDict_;
-   
+
    //Mesh
    const  fvMesh&                                      mesh_;
-   
+
    //Operation to perform
    int                                        bodyOperation_;
-         
+
    //base geometry
    triSurfaceMesh*                             bodySurfMesh_;
-   
+
    //surface cells
    std::vector< label >                           surfCells_;
-   
+
    //internal cells
    std::vector< label >                            intCells_;
-  
+
    //interpolation points, point[0] is a surface point
    std::vector< std::vector< point > >  interpolationPoints_;
-   
+
    //interpolation cells
    std::vector< std::vector< label > >   interpolationCells_;
-  
+
    //Create immersed body info
-   void  createImmersedBody( volScalarField& body );
+   void  createImmersedBody( volScalarField& lambda );
 
    //Update immersed body info
-   void  updateImmersedBody( volScalarField& body );
-   
+   void  updateImmersedBody( volScalarField& lambda );
+
    //Create interpolation points
    void  calculateInterpolationPoints(volScalarField& body,  triSurfaceSearch * ibTriSurfSearch );
-   
+
    //Rotate immersed body
    void rotateImmersedBody();
-   
-   //Reset body field
-   void resetBody(volScalarField& body);
-   
+
+   //Reset lambda field
+   void resetLambda(volScalarField& lambda);
+
    //Refine body field using MC-like integration
-   void refineBody(volScalarField& body,   triSurfaceSearch * ibTriSurfSearch, const pointField * pp);
-  
-   
+   void refineLambda(volScalarField& lambda,   triSurfaceSearch * ibTriSurfSearch, const pointField * pp);
+
+
   public:
-   
+
    immersedBody(word fileName, const Foam::fvMesh& mesh, dictionary HFDIBDict );
    ~immersedBody();
-   
+
   //Getters
-    
+
    const std::vector< label > *     getSurfaceCellList() const {return &surfCells_;};
-   
-   const std::vector< std::vector< point > > * getInterpolationPoints() const {return &interpolationPoints_;};  
-   
-   const std::vector< std::vector< label > > * getInterpolationCells() const {return &interpolationCells_;};  
-   
+
+   const std::vector< std::vector< point > > * getInterpolationPoints() const {return &interpolationPoints_;};
+
+   const std::vector< std::vector< label > > * getInterpolationCells() const {return &interpolationCells_;};
+
    //Update body field
-   void  updateBodyField( volScalarField & body );
-  
+   void  updateLambdaField( volScalarField & lambda );
+
    //Update imposed vector field
    void updateVectoField(volVectorField & VS, word Vname);
 
-   
+
  };
 }
 #endif

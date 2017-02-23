@@ -40,20 +40,6 @@ volVectorField Ui
     U
 );
 
-Info<< "Reading field lambda\n" << endl;
-volScalarField lambda
-(
-    IOobject
-    (
-        "lambda",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("zero",dimless,0) // initialising to 0
-);
 
 Info<< "Reading field f\n" << endl;
 volVectorField f
@@ -85,5 +71,3 @@ autoPtr<incompressible::turbulenceModel> turbulence
 (
     incompressible::turbulenceModel::New(U, phi, laminarTransport)
 );
-
-

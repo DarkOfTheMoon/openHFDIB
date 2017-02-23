@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     #include "createMRF.H"
     #include "createFvOptions.H"
     #include "initContinuityErrs.H"
-    
+
     openHFDIB  HFDIB(mesh);
     HFDIB.initialize();
 
@@ -65,22 +65,16 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
-    
-    volScalarField surface("surf",lambda);
+
+
+    volVectorField gradP("gradP",fvc::grad(p));
 
     while (runTime.loop())
     {
-        
-     HFDIB.update(lambda);
-    
-     forAll(Ui,cellI)
-     {
-      Ui[cellI].component(0)=0.0;
-      if( lambda[cellI]>0.1 ) surface[cellI] =1.0;
-      else surface[cellI] =0.0;
 
-     }
-        
+     HFDIB.update();
+
+
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         #include "CourantNo.H"

@@ -19,7 +19,7 @@ while (piso.correctNonOrthogonal())
 
     fvScalarMatrix pEqn
     (
-        fvm::laplacian(rAU, p) == fvc::div(phiHbyA) + fvc::div(lambda*rAU*f)
+        fvm::laplacian(rAU, p) == fvc::div(phiHbyA) + fvc::div(rAU*f)
     );
 
     pEqn.setReference(pRefCell, pRefValue);
@@ -32,14 +32,15 @@ while (piso.correctNonOrthogonal())
     }
 }
 
+//Update pressure gradient field
+gradP = fvc::grad(p);
 
-U = HbyA - rAU*fvc::grad(p) + rAU*f;
+//Update velocity
+U = HbyA - rAU*gradP + rAU*f;
 U.correctBoundaryConditions();
-//Update imposed field
-rUA = 1.0/rAU;
-rUA.correctBoundaryConditions();
-HFDIB.interpolateIB(U,Ui,lambda);
-f = surface*(rUA*Ui - UEqn.H() +fvc::grad(p) );
+
+//Update IB forcing term
+HFDIB.updateIBForcing( U, Ui, UEqn, f , &gradP);
 
 #include "continuityErrs.H"
 fvOptions.correct(U);

@@ -17,12 +17,11 @@ fvOptions.constrain(UEqn);
 
 //if (piso.momentumPredictor())
 //{
-    volScalarField rUA(UEqn.A());
-    rUA.correctBoundaryConditions();
-    HFDIB.interpolateIB(U,Ui,lambda);
-    f = surface*(rUA*Ui - UEqn.H() +fvc::grad(p) );
-    
-    solve(UEqn == -fvc::grad(p) + f );
-    
+
+    //Update IB forcing term
+    //HFDIB.updateIBForcing( U, Ui, UEqn, f , &gradP);
+
+    solve(UEqn == -gradP + f );
+
     fvOptions.correct(U);
 //}
